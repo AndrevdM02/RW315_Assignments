@@ -134,6 +134,10 @@ class LRClassifier:
         z = (1/(1+np.exp(-X)))
         return z
 
+    def inv_sigmoid(self, num):
+        n = -np.log((1/num)-1)
+        return n
+    
     def log_likelihood(self, X, w, y):
         z = X.dot(w)
         z = self.sigmoid(z)
