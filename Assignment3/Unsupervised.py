@@ -6,22 +6,21 @@ class Kmeans:
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.random_state = random_state
+        self.cluster_means = None
+        self.labels = None
 
-    def fit(self, X):
+    def fit(self, X, means=None):
 
         if self.random_state != None:
             np.random.seed(self.random_state)
 
         # Generate a random startpoint, for d cluster center points.
-        start_X_index = np.random.randint(low=0, high=X.shape[0], size=self.n_clusters)
-        Mean = X[start_X_index,:]
-
-        Mean[0,0] = 0
-        Mean[1,0] = 5
-
-        Mean[0,1] = 0
-        Mean[1,1] = -4
-        Mean = Mean.T
+        if (means == None).all:
+            start_X_index = np.random.randint(low=0, high=X.shape[0], size=self.n_clusters)
+            Mean = X[start_X_index,:]
+        else:
+            Mean = means
+            
 
         # Class labels
         labels = np.zeros(X.shape[0], dtype=int)
@@ -40,7 +39,24 @@ class Kmeans:
         
             # Assign a label to each observation depending to which cluster center it is the closest to
             # TODO
-            
-            # labels[dist[:,current_label]>=dist[:,1]] = 1
-            # labels[dist[:,1]>dist[:,0]] = 0
-                
+            for j in range(0,X.shape[0]):
+                label = 0
+                for k in range(1, self.n_clusters):
+                    if dist[j,k-1]>=dist[j,k]:
+                        label = k
+                labels[j] = label
+
+            old_mean = np.copy(Mean)
+
+            # Calculate new cluster points; mean of all points beloning to the same cluster
+            for j in range(0, self.n_clusters):
+                for k in range(0, X.shape[1]):
+                    Mean[j,k] = np.mean(X[labels==j, k])
+
+            # Check for convergens
+            if (old_mean == Mean).all():
+                break
+
+        self.cluster_centers = Mean
+        self.labels = labels
+        return self
