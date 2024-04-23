@@ -15,11 +15,8 @@ class Kmeans:
             np.random.seed(self.random_state)
 
         # Generate a random startpoint, for d cluster center points.
-        if (means == None).all:
-            start_X_index = np.random.randint(low=0, high=X.shape[0], size=self.n_clusters)
-            Mean = X[start_X_index,:]
-        else:
-            Mean = means
+        start_X_index = np.random.randint(low=0, high=X.shape[0], size=self.n_clusters)
+        Mean = X[start_X_index,:]
             
 
         # Class labels
@@ -60,3 +57,12 @@ class Kmeans:
         self.cluster_centers = Mean
         self.labels = labels
         return self
+
+    def decision_boundary(self, means=None):
+        Mean = means
+
+        m = (Mean[1,1] - Mean[0,1]) / (Mean[1,0] - Mean[0,0])
+        c = Mean[0,1] - (m*Mean[0,0])
+        m = -1/m
+
+        return m, c
