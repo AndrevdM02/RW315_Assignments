@@ -425,3 +425,15 @@ class Gaussian_Mixture:
             gamma.append(val)
             # gamma.append((round(val,4)))
         return gamma
+
+    def estimate_Sigma(X, gamma_var, mu):
+        N0 = np.sum(gamma_var[:,0])
+        N1 = np.sum(gamma_var[:,1])
+        
+        s = np.zeros((2,1),dtype=float) #s[density num,x or y]
+        s[0] = np.dot((gamma_var[:,0][:, np.newaxis] * (X-mu[0])).T, (X-mu[0])) / N0
+        s[1] = np.dot((gamma_var[:,1][:, np.newaxis] * (X-mu[1])).T, (X-mu[1])) / N1
+    #     s[0] = (1.0/N0) * np.sum(gamma_var[:,0]*(X-mu[0])**2)
+    #     s[1] = (1.0/N1) * np.sum(gamma_var[:,1]*(X-mu[1])**2)
+        
+        return np.sqrt(s)
